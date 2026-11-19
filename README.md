@@ -1,5 +1,11 @@
 # Web Blueprints
 
+> **This is a demo repository.** It exists to demonstrate
+> [fabro](https://github.com/fabro-sh/fabro) and its **ai-sandbox platform
+> integration**: a realistic, fully working static website — content, build,
+> and preview deploys included — that the platform can drive end to end.
+> Everything below is the blueprint's own documentation and still applies.
+
 A ready-to-copy starting point for company websites that are **fast, cheap to
 run, and safe to change**. Pages are simple text files, the site is published
 for free on GitHub Pages, and **every proposed change gets its own live preview
