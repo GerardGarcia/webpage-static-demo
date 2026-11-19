@@ -1,0 +1,24 @@
+_version = 1
+
+[workflow]
+graph = "workflow.fabro"
+
+[run]
+goal = "Build and verify a requested feature in isolated A2A sandboxes"
+
+[run.clone]
+enabled = false
+
+[run.run_branch]
+enabled = false
+push = false
+
+[run.environment.env]
+FACTORY_DISPATCH = "{{ vars.FACTORY_DISPATCH }}"
+FACTORY_REPO = "{{ vars.FACTORY_REPO }}"
+FACTORY_SETUP_COMMAND = "{{ vars.FACTORY_SETUP_COMMAND }}"
+FACTORY_TEST_COMMAND = "{{ vars.FACTORY_TEST_COMMAND }}"
+SANDBOX_API = "{{ vars.SANDBOX_API }}"
+FACTORY_GITHUB_READ_TOKEN = '{{ secrets.FACTORY_GITHUB_READ_TOKEN | default("") }}'
+FACTORY_GITHUB_WRITE_TOKEN = "{{ secrets.FACTORY_GITHUB_WRITE_TOKEN }}"
+AI_GATEWAY_API_KEY = "{{ secrets.AI_GATEWAY_API_KEY }}"

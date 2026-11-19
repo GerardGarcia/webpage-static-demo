@@ -1,0 +1,19 @@
+digraph Factory {
+    graph [goal="Build and verify a requested feature", default_max_retries=0]
+    start [shape=Mdiamond]
+    request [shape=hexagon, label="Describe the feature or fix. To select profiles, enter JSON with request, main_model, primary_model, alternative_model, worker_model, sandbox and base.", question_type="freeform"]
+    seed [shape=parallelogram, label="Prepare repository snapshot", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" seed", stdin_source="context.human.gate.text", output_schema="routing", timeout="10m", on_failure="exit"]
+    plan [shape=parallelogram, script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" plan", stdin_source="context.factory_seed", output_schema="routing", timeout="10m", on_failure="exit"]
+    fork [shape=component]
+    primary [shape=parallelogram, label="Implement and verify primary candidate", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" primary", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
+    alternative [shape=parallelogram, label="Implement and verify alternative candidate", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" alternative", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
+    join [shape=tripleoctagon]
+    publish [shape=parallelogram, label="Push verified commit and open draft PR", goal_gate=true, script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" publish", stdin_source="context.parallel.results", output_schema="routing", timeout="10m", on_failure="exit"]
+    exit [shape=Msquare]
+    start -> request
+    request -> seed [freeform=true]
+    seed -> plan -> fork
+    fork -> primary -> join
+    fork -> alternative -> join
+    join -> publish -> exit
+}
