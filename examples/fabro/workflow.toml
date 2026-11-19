@@ -10,7 +10,11 @@ goal = "Build and verify a requested feature in isolated A2A sandboxes"
 enabled = false
 push = false
 
+[run.artifacts]
+include = ["artifacts/browser/**/*.png", "artifacts/browser/**/test-results.json"]
+
 [run.environment.env]
+FACTORY_BROWSER_EVIDENCE = "1"
 FACTORY_DISPATCH = "{{ vars.FACTORY_DISPATCH }}"
 FACTORY_REPO = "{{ vars.FACTORY_REPO }}"
 FACTORY_SETUP_COMMAND = "{{ vars.FACTORY_SETUP_COMMAND }}"
