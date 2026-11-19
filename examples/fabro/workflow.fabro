@@ -5,9 +5,9 @@ digraph Factory {
     seed [shape=parallelogram, label="Prepare repository snapshot", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" seed", stdin_source="context.human.gate.text", output_schema="routing", timeout="10m", on_failure="exit"]
     plan [shape=parallelogram, script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" plan", stdin_source="context.factory_seed", output_schema="routing", timeout="10m", on_failure="exit"]
     fork [shape=component]
-    primary [shape=parallelogram, label="Implement and verify primary candidate", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" primary", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
-    alternative [shape=parallelogram, label="Implement and verify alternative candidate", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" alternative", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
-    gemini [shape=parallelogram, label="Implement and verify Gemini candidate", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" gemini", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
+    "deepseek-v4.1-flash" [shape=parallelogram, label="deepseek-v4.1-flash", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" primary", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
+    "glm-5.3-flash" [shape=parallelogram, label="glm-5.3-flash", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" alternative", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
+    "gemini-4-hydrogen" [shape=parallelogram, label="gemini-4-hydrogen", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" gemini", stdin_source="context.factory_plan", output_schema="routing", timeout="25m"]
     join [shape=tripleoctagon]
     evaluate [shape=parallelogram, label="Compare verified candidates with GLM-5.3", script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" evaluate", stdin_source="context.parallel.results", output_schema="routing", timeout="20m", on_failure="exit"]
     publish [shape=parallelogram, label="Push verified commit and open draft PR", goal_gate=true, script="\"${FACTORY_DOCKER_DISPATCH:-$FACTORY_DISPATCH}\" publish", stdin_source="context.factory_evaluate", output_schema="routing", timeout="10m", on_failure="exit"]
@@ -15,8 +15,8 @@ digraph Factory {
     start -> request
     request -> seed [freeform=true]
     seed -> plan -> fork
-    fork -> primary -> join
-    fork -> alternative -> join
-    fork -> gemini -> join
+    fork -> "deepseek-v4.1-flash" -> join
+    fork -> "glm-5.3-flash" -> join
+    fork -> "gemini-4-hydrogen" -> join
     join -> evaluate -> publish -> exit
 }
